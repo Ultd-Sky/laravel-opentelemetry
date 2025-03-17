@@ -200,7 +200,10 @@ class LaravelOpenTelemetryServiceProvider extends PackageServiceProvider
         };
 
         return match ($protocol) {
-            'grpc' => (new GrpcTransportFactory)->create($endpoint.OtlpUtil::method($signal)),
+            'grpc' => (new GrpcTransportFactory)->create(
+                endpoint: $endpoint.OtlpUtil::method($signal),
+                headers: OtlpUtil::getHeaders(Signals::TRACE)
+            ),
             'http/json', 'json' => (new OtlpHttpTransportFactory)->create(
                 endpoint: (new HttpEndpointResolver)->resolveToString($endpoint, $signal),
                 contentType: 'application/json',
